@@ -7,5 +7,5 @@ Project Name: GreenTrace
 
 Project Description: GreenTrace is an eco-friendly activity logging platform designed to encourage users to track and manage their carbon footprint. By logging various activities, users can gain insights into their environmental impact and earn rewards in the form of eco-tokens. The application utilizes blockchain technology to ensure transparency, security, and reliability in tracking users’ activities and rewards.
 
-Ethereum testnet used: SepoliaETH [obtained from this faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
-Deployed Front-end:
+Ethereum testnet used: SepoliaETH [obtained from this faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)\
+Deployed Front-end: [Click Here](https://natchakarnsa.github.io/dashboard.html)
