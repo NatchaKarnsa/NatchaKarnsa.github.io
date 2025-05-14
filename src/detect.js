@@ -75,7 +75,7 @@ async function getAccount() {
 function logout() {
   console.log("Logging out...");
   localStorage.removeItem("userAccount"); // Clear the stored account
-  window.location.href = "index.html"; // Redirect to the login page
+  window.location.href = "/index.html"; // Redirect to the login page
 }
 
 // Ensure the button is set up after DOM is loaded
