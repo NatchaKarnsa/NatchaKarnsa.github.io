@@ -23,7 +23,7 @@ window.addEventListener("load", setup);
 /* Handle chain (network) and chainChanged (per EIP-1193) */
 /**********************************************************/
 
-const chainId = await window.ethereum.request({ method: "eth_chainId" });
+//const chainId = await window.ethereum.request({ method: "eth_chainId" });
 
 window.ethereum.on("chainChanged", handleChainChanged);
 
