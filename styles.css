@@ -1,0 +1,225 @@
+body {
+  background-color: #043927; /* Green background */
+  color: white; /* Text color for better contrast */
+  font-family: Arial, sans-serif; /* Font style */
+  margin: 0;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center; /* Center the text */
+  width: 100%; /* Full width */
+  color: white; /* Text color for header */
+  font-size: 10px;
+  height: 50px; /* Set a fixed height for better vertical alignment */
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; /* Center items vertically */
+}
+
+.container {
+  display: flex; /* Use flexbox for layout */
+  width: 100%; /* Full width */
+  height: calc(100vh - 60px);
+}
+
+.left-box,
+.right-box {
+  flex: 1; /* Take equal space */
+  display: flex; /* Use flexbox for alignment */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: left; /* Center items horizontally */
+  padding: 20px; /* Add some padding */
+}
+
+.title-text {
+  font-family: "Yeseva One", sans-serif;
+  font-size: 120px;
+}
+
+.header-text {
+  font-family: "Yeseva One", sans-serif;
+  font-size: 20px;
+}
+
+.sub-text {
+  font-family: "Actor", sans-serif;
+}
+
+.globe-image {
+  width: 1000px;
+  height: auto;
+}
+
+.dashboard-box {
+  background-color: white;
+  margin-bottom: 5%;
+  height: 80px;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: left;
+}
+
+:root {
+  --primary-color: #043927;
+  --secondary-color: #e6eef9;
+}
+
+.slider-container {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabs {
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15),
+    0 6px 12px 0 rgba(24, 94, 224, 0.15);
+  padding: 0.75rem;
+  border-radius: 99px;
+}
+
+.tabs * {
+  z-index: 2;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 200px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s ease-in;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-left: 0.75rem;
+  border-radius: 50%;
+  background-color: var(--secondary-color);
+  transition: 0.15s ease-in;
+}
+
+input[type="radio"]:checked + label {
+  color: var(--primary-color);
+}
+
+input[type="radio"]:checked + label > .notification {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+input[id="radio-1"]:checked ~ .glider {
+  transform: translateX(0);
+}
+
+input[id="radio-2"]:checked ~ .glider {
+  transform: translateX(100%);
+}
+
+input[id="radio-3"]:checked ~ .glider {
+  transform: translateX(200%);
+}
+
+.glider {
+  position: absolute;
+  display: flex;
+  height: 40px;
+  width: 200px;
+  background-color: var(--secondary-color);
+  z-index: 1;
+  border-radius: 99px;
+  transition: 0.25s ease-out;
+}
+
+@media (max-width: 700px) {
+  .tabs {
+    transform: scale(0.6);
+  }
+}
+
+.input-group input {
+  padding: 10px; /* Padding inside the input */
+  width: 95%;
+}
+
+.input-group {
+  margin-bottom: 15px; /* Spacing between input fields */
+}
+
+input:focus {
+  outline: none; /* Remove default outline */
+  background-color: transparent; /* Keep background clear */
+  border: 1px solid #ccc; /* Keep border color */
+  cursor: default; /* Change cursor to default */
+}
+
+.submit-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #043927;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin: 20px auto; /* Center the button */
+  display: block; /* Ensure the button is a block element */
+}
+
+#activitiesContainer {
+  height:  auto; /* Set a fixed height for the container */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  background-color: white; /* Optional: background color */
+  max-height: 330px; /* Adjust the height as needed */
+  overflow-y: auto;  /* Enable vertical scrolling */
+  
+}
+
+.card {
+  background-color: #f9f9f9; /* Light background for the card */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 1em !important;
+  margin-bottom: 10px; /* Space below each card */
+  line-height: 10%;
+  display: flex;
+  align-items: center;
+
+}
+
+.column {
+  flex: 1;
+}
+
+.logOutEthereumButton {
+  padding: 0 10px; /* Set vertical padding to 0 for full height */
+  width: 100px; /* Set a fixed width */
+  font-size: 15px;
+  height: 60%; /* Fill the full height of the header */
+  border: 1px solid white; /* Optional: remove border */
+  background-color: #043927; /* Optional: button background color */
+  color: white; /* Optional: button text color */
+  cursor: pointer; /* Change cursor on hover */
+  align-self: center;
+  
+}
+

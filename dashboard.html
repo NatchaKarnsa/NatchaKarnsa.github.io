@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Actor&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Afacad&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple dapp</title>
+    <script type="module" src="src/main.js"></script>
+    <script type="module" src="src/detect.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.0/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div style="margin-left: 10px">
+        <span class="header-text" style="color: #98fb98">Green</span>
+        <span class="header-text" style="color: #228b22">Trace.</span>
+      </div>
+
+      <button class="logOutEthereumButton" style="margin-right: 10px">
+        Log Out
+      </button>
+    </div>
+    <div
+      class="container"
+      style="background-color: #dddddd; color: black; font-family: Afacad"
+    >
+      <div class="left-box" style="margin-left: 20px">
+        <div style="color: black; font-size: 35px">
+          Welcome to your Dashboard!
+        </div>
+        <div id="userAddress" style="margin-bottom: 10%"></div>
+        <div class="dashboard-box">
+          <div style="font-size: 20px">Eco Tokens Balance:</div>
+          <div
+            id="accountBalance"
+            style="font-size: 50px; line-height: 100%"
+          ></div>
+        </div>
+        <div class="dashboard-box">
+          <div style="font-size: 20px">Total Activities Logged:</div>
+          <div
+            id="activityNumber"
+            style="font-size: 50px; line-height: 100%"
+          ></div>
+        </div>
+      </div>
+      <div class="right-box" style="margin-right: 20px">
+        <div class="slider-container">
+          <div class="tabs">
+            <input
+              type="radio"
+              id="radio-1"
+              name="tabs"
+              checked
+              onclick="changeContent('newActivities')"
+            />
+            <label class="tab" for="radio-1">Add New Activities</label>
+            <input
+              type="radio"
+              id="radio-2"
+              name="tabs"
+              onclick="changeContent('pastActivities')"
+            />
+            <label class="tab" for="radio-2">Past Activities</label>
+            <span class="glider"></span>
+          </div>
+        </div>
+        <div
+          class="dashboard-box"
+          id="display-box"
+          style="height: 400px; margin-top: 20px"
+        >
+          <div style="font-size: 20px; margin-bottom: 30px">
+            To earn EcoTokens, please log your activities in the form below.
+            Each activity logged will be recorded on the blockchain, and for
+            every kilogram, you will receive one EcoToken. Start contributing to
+            a greener future today!
+            <span style="font-weight: bold"
+              >(Please wait a few seconds after you hit the submit button; a
+              confirmation message will be displayed)</span
+            >
+          </div>
+          <div class="input-group">
+            <div>Enter Activity Name:</div>
+            <input
+              type="text"
+              id="activity-name"
+              placeholder="Activity Name"
+              style="margin-bottom: 20px"
+            />
+            <div>Enter Carbon Footprint in Kilograms (Max 5 KG):</div>
+            <input
+              type="number"
+              id="carbon-footprint"
+              max="5"
+              min="0"
+              placeholder="0"
+            />
+            <button
+              class="submit-button"
+              style="margin-top: 50px"
+              onclick="submitActivity()"
+            >
+              Submit
+            </button>
+            <p>Error Message</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Initialize default content
+
+      const account = localStorage.getItem("userAccount");
+
+      if (account) {
+        document.getElementById(
+          "userAddress"
+        ).innerText = `Your Wallet Address: ${account}`;
+      } else {
+        document.getElementById("userAddress").innerText =
+          "No account connected.";
+      }
+
+      //const trackerAddress = "0x73f5629426d7997e545997b91bc2c2ccb20f687d"; // EnvironmentalImpactTracker contract address
+      const trackerAddress = "0xa14524EFa1A6C04Ad1c31055F4D8ff5C359D1dDE"; // EnvironmentalImpactTracker contract address
+      const abi = [
+        {
+          constant: true,
+          inputs: [],
+          name: "getEcoTokenBalance",
+          outputs: [{ name: "", type: "uint256" }],
+          payable: false,
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          constant: true,
+          inputs: [{ name: "user", type: "address" }],
+          name: "getActivities",
+          outputs: [
+            {
+              components: [
+                { name: "name", type: "string" },
+                { name: "carbonFootprint", type: "uint256" },
+                { name: "date", type: "uint256" },
+              ],
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          payable: false,
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          constant: false,
+          inputs: [
+            { name: "description", type: "string" },
+            { name: "carbonFootprint", type: "uint256" },
+          ],
+          name: "logActivity",
+          outputs: [],
+          payable: false,
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ];
+
+      // Create a Web3 instance
+      const web3 = new Web3(window.ethereum);
+
+      // Create contract instance
+      const contract = new web3.eth.Contract(abi, trackerAddress);
+
+      async function getBalance() {
+        try {
+          const balance = await contract.methods
+            .getEcoTokenBalance()
+            .call({ from: account });
+          console.log("Raw balance:", balance); // Log raw balance for debugging
+
+          document.getElementById("accountBalance").innerText = `${balance}`;
+        } catch (error) {
+          console.error("Error fetching balance:", error);
+          document.getElementById("balanceResult").innerText =
+            "Error fetching balance";
+        }
+      }
+
+      async function getActivitiesLength() {
+        try {
+          const activities = await contract.methods
+            .getActivities(account)
+            .call();
+          console.log("Activities:", activities); // Log activities for debugging
+          console.log("Number of activities:", activities.length);
+          const activitiesNumber = document.getElementById("activityNumber");
+          activitiesNumber.innerHTML = activities.length;
+        } catch {}
+      }
+
+      async function getActivities() {
+        try {
+          const activities = await contract.methods
+            .getActivities(account)
+            .call();
+          console.log("Activities:", activities); // Log activities for debugging
+          console.log("Number of activities:", activities.length);
+          return activities;
+
+          // Assuming activities is an array of objects
+        } catch (error) {
+          console.error("Error fetching activities:", error);
+          document.getElementById("activitiesResult").innerText =
+            "Error fetching activities";
+        }
+      }
+
+      async function submitActivity() {
+        const activityName = document.getElementById("activity-name").value;
+        const carbonFootprint =
+          document.getElementById("carbon-footprint").value;
+        try {
+          // Call the logActivity function
+          const result = await contract.methods
+            .logActivity(activityName, carbonFootprint)
+            .send({ from: account });
+          console.log("Activity logged:", result);
+          alert("Activity logged successfully!");
+          location.reload();
+        } catch (error) {
+          console.error("Error logging activity:", error);
+          alert("Failed to log activity. Please try again.");
+        }
+      }
+      getActivitiesLength();
+      getBalance(); // Call the getBalance function
+
+      async function changeContent(tab) {
+        const displayBox = document.getElementById("display-box");
+
+        if (tab === "newActivities") {
+          displayBox.innerHTML = `
+            <div style="font-size: 20px; margin-bottom: 30px">
+            To earn EcoTokens, please log your activities in the form below.
+            Each activity logged will be recorded on the blockchain, and for
+            every kilogram, you will receive one EcoToken. Start contributing to
+            a greener future today!
+            <span style="font-weight: bold"
+              >(Please wait a few seconds after you hit the submit button; a
+              confirmation message will be displayed)</span
+            >
+          </div>
+            <div class="input-group" id="activity-form">
+                <div>Enter Activity Name:</div>
+                <input type="text" id="activity-name" placeholder="Activity Name" style="margin-bottom: 20px" />
+                <div>Enter Carbon Footprint in Kilograms (Max 5 KG):</div>
+                <input type="number" id="carbon-footprint" max="5" min="0" placeholder="0" />
+                <button class="submit-button" style="margin-top: 50px" onclick="submitActivity()">
+                    Submit
+                </button>
+            </div>
+        `;
+        } else if (tab === "pastActivities") {
+          // call get activity here and return an object
+          // pass object into HTML
+          const activities = await getActivities(); // Fetch activities
+
+          // Build HTML for activities
+          let activitiesHTML = `
+            <div style="font-size: 20px; margin-bottom: 30px;">
+                Here are your past activities logged for EcoTokens (box is scollable):
+            </div>
+            <div id="activitiesContainer">
+        `;
+
+          if (activities.length === 0) {
+            activitiesHTML += `<p>No past activities logged yet.</p>`;
+          } else {
+            activities.forEach((activity) => {
+              activitiesHTML += `
+                    <div class="card">
+                      <div class="column" style="text-align: left;">
+                          <p style="font-size: 20px">Activity: ${
+                            activity.name
+                          }</p>
+                          <p>Date: ${new Date(
+                            activity.date * 1000
+                          ).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })}</p>
+
+                      </div>
+                      <div class="column" style="text-align: right; font-size: 15px ">
+                          <p>Carbon Footprint: ${activity.carbonFootprint}</p>
+                          <p>Tokens Earned: ${activity.carbonFootprint}</p>
+                      </div>
+                    </div>
+                `;
+            });
+          }
+          activitiesHTML += `</div>`; // Close activitiesContainer
+          displayBox.innerHTML = activitiesHTML; // Set the inner HTML
+        }
+      }
+
+      //getActivities();
+      changeContent("newActivities");
+    </script>
+  </body>
+</html>
