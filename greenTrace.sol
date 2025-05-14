@@ -1,13 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { ERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-
-contract EcoToken is ERC20 {
-    constructor(uint256 initialSupply, address deployer) ERC20("EcoToken", "ECO") {
-        _mint(deployer, initialSupply);
-    }
-}
+import "./EcoToken.sol"; 
 
 contract EnvironmentalImpactTracker {
     EcoToken public ecoToken;
@@ -30,11 +24,11 @@ contract EnvironmentalImpactTracker {
     }
 
     function logActivity(string memory description, uint256 carbonFootprint) public {
-        // Log the activity
+        
         activities[msg.sender].push(Activity(description, carbonFootprint, block.timestamp));
         emit ActivityLogged(msg.sender, description, carbonFootprint, block.timestamp);
 
-        // Calculate and reward tokens
+        
         uint256 reward = calculateReward(carbonFootprint);
 
         // Check if the tracker has enough balance before transferring
@@ -50,7 +44,7 @@ contract EnvironmentalImpactTracker {
     }
 
     function calculateReward(uint256 carbonFootprint) internal pure returns (uint256) {
-        // Simple reward calculation (e.g., 1 EcoToken per unit of carbon footprint)
+        // 1 EcoToken per unit of carbon footprint --> easy rule
         return carbonFootprint;
     }
 
